@@ -9,7 +9,7 @@
 <body>
   <main class="app">
     <h1>谁是卧底</h1>
-    <p class="subtitle">Chinese Class Word Game</p>
+    <p class="subtitle">"Who's the Mole?"<br>A Classic Chinese Word Game</p>
 
     <section class="card">
       <h2>Create a Room</h2>
@@ -33,12 +33,12 @@
 
       <label>
         Room code:
-        <input id="joinRoomCodeInput" type="text" placeholder="A7KQ" />
+        <input id="joinRoomCodeInput" type="text" placeholder="A1B2..." />
       </label>
 
       <label>
-        Your name:
-        <input id="playerNameInput" type="text" placeholder="Enter your name" />
+        Your nickname:
+        <input id="playerNameInput" type="text" placeholder="Enter your nickname" />
       </label>
 
       <button id="joinRoomBtn">Join Room</button>
@@ -61,6 +61,11 @@
       <ul id="playersList"></ul>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <p>POC for this project is SGT DeGaetano</p>
+    <p class="disclaimer">Duplicate words? Sorry about that — click reshuffle until you get something new!</p>
+  </footer>
 
   <script type="module" src="script.js"></script>
 </body>

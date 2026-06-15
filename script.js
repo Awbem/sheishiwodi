@@ -8,6 +8,7 @@ import {
   onValue,
   push
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+import { wordPairs } from "./Word Pairs List.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1kwo_nacyyutab8VElG5H6wCzpdQ9Xbk",
@@ -22,14 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const wordPairs = [
-  { normal: "春节", undercover: "中秋节", topic: "节日" },
-  { normal: "饺子", undercover: "包子", topic: "食物" },
-  { normal: "火车", undercover: "飞机", topic: "交通" },
-  { normal: "老师", undercover: "学生", topic: "学校" },
-  { normal: "医院", undercover: "诊所", topic: "地方" },
-  { normal: "手机", undercover: "电脑", topic: "科技" }
-];
 
 let currentRoomCode = "";
 let currentPlayerId = "";
@@ -169,6 +162,7 @@ startGameBtn.addEventListener("click", async () => {
   });
 
   await update(ref(db), updates);
+  startGameBtn.textContent = "Words Sent! Click again to reshuffle.";
 });
 
 revealWordBtn.addEventListener("click", async () => {
@@ -207,7 +201,11 @@ function watchRoom(roomCode) {
       startGameBtn.textContent = `Waiting for players (${playerIds.length}/${room.maxPlayers})`;
     } else {
       startGameBtn.disabled = false;
-      startGameBtn.textContent = "Start Game";
+      if (room.status !== "started") {
+        startGameBtn.textContent = "Start Game";
+      } else {
+        startGameBtn.textContent = "Words Sent! Click again to reshuffle.";
+      }
     }
 
     if (room.status === "started") {

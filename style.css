@@ -108,3 +108,24 @@ button:hover {
 .secret-card h2 {
   font-size: 3rem;
 }
+
+.site-footer {
+  flex: 0 0 100%;
+  background: #222;
+  color: #f6f1e8;
+  border: 2px solid #222;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+}
+
+.site-footer .disclaimer {
+  color: #ffd166;
+  font-weight: 700;
+}
