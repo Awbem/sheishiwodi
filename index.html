@@ -1,9 +1,67 @@
-<!doctype html>
-<html>
-  <head>
-    <title>谁是卧底</title>
-  </head>
-  <body>
-    <p>This is a basis for initial project construction</p>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>谁是卧底</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <h1>谁是卧底</h1>
+    <p class="subtitle">Chinese Class Word Game</p>
+
+    <section class="card">
+      <h2>Create a Room</h2>
+      <label>
+        Number of players:
+        <input id="playerCountInput" type="number" min="3" max="30" value="6" />
+      </label>
+
+      <button id="createRoomBtn">Create Room</button>
+
+      <div id="teacherPanel" class="hidden">
+        <h3>Room Code:</h3>
+        <div id="roomCodeDisplay" class="room-code"></div>
+        <p>Students should enter this code below.</p>
+        <button id="startGameBtn">Start Game</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Join a Room</h2>
+
+      <label>
+        Room code:
+        <input id="joinRoomCodeInput" type="text" placeholder="A7KQ" />
+      </label>
+
+      <label>
+        Your name:
+        <input id="playerNameInput" type="text" placeholder="Enter your name" />
+      </label>
+
+      <button id="joinRoomBtn">Join Room</button>
+    </section>
+
+    <section id="playerPanel" class="card hidden">
+      <h2 id="playerGreeting"></h2>
+      <p id="gameStatusText">Waiting for the teacher to start the game...</p>
+
+      <button id="revealWordBtn" class="hidden">Reveal My Word</button>
+
+      <div id="secretWordCard" class="secret-card hidden">
+        <p>Your word is:</p>
+        <h2 id="secretWordText"></h2>
+      </div>
+    </section>
+
+    <section id="lobbyPanel" class="card hidden">
+      <h2>Players in Room</h2>
+      <ul id="playersList"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
 </html>
