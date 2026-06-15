@@ -20,19 +20,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
-// Paste your Firebase config here.
-const firebaseConfig = {
-  apiKey: "AIzaSyB1kwo_nacyyutab8VElG5H6wCzpdQ9Xbk",
-  authDomain: "awbem-sheishiwodi.firebaseapp.com",
-  databaseURL: "https://awbem-sheishiwodi-default-rtdb.firebaseio.com",
-  projectId: "awbem-sheishiwodi",
-  storageBucket: "awbem-sheishiwodi.firebasestorage.app",
-  messagingSenderId: "243647216347",
-  appId: "1:243647216347:web:ff462f749e4c4361a42afe"
-};
-
-const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const wordPairs = [
