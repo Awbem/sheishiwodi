@@ -146,6 +146,11 @@ startGameBtn.addEventListener("click", async () => {
     return;
   }
 
+  if (room.maxPlayers && playerIds.length < room.maxPlayers) {
+    alert(`Waiting for all ${room.maxPlayers} players to join. ${playerIds.length} of ${room.maxPlayers} have joined.`);
+    return;
+  }
+
   const undercoverIndex = Math.floor(Math.random() * playerIds.length);
   const undercoverPlayerId = playerIds[undercoverIndex];
 
@@ -195,6 +200,15 @@ function watchRoom(roomCode) {
     if (!room) return;
 
     renderPlayers(room.players || {});
+
+    const playerIds = room.players ? Object.keys(room.players) : [];
+    if (room.maxPlayers && playerIds.length < room.maxPlayers) {
+      startGameBtn.disabled = true;
+      startGameBtn.textContent = `Waiting for players (${playerIds.length}/${room.maxPlayers})`;
+    } else {
+      startGameBtn.disabled = false;
+      startGameBtn.textContent = "Start Game";
+    }
 
     if (room.status === "started") {
       gameStatusText.textContent = "The game has started.";
