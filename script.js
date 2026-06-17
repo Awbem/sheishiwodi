@@ -26,6 +26,7 @@ const db = getDatabase(app);
 
 let currentRoomCode = "";
 let currentPlayerId = "";
+const lastPlayerWords = new Map();
 
 const playerCountInput = document.getElementById("playerCountInput");
 const createRoomBtn = document.getElementById("createRoomBtn");
@@ -159,7 +160,49 @@ joinRoomBtn.addEventListener("click", async () => {
   show(playerPanel);
   show(lobbyPanel);
   watchRoom(roomCode);
+  // listen for changes to this player's data so UI updates on reshuffle
+  watchPlayer(roomCode, currentPlayerId);
 });
+
+function watchPlayer(roomCode, playerId) {
+  if (!roomCode || !playerId) return;
+  const playerRef = ref(db, `rooms/${roomCode}/players/${playerId}`);
+  onValue(playerRef, (snapshot) => {
+    const player = snapshot.val();
+    if (!player) return;
+
+    const newWord = player.word || "";
+
+    // If this is the first time we see this player, store current word and
+    // initialize UI (no auto-hide on initial load).
+    if (!lastPlayerWords.has(playerId)) {
+      lastPlayerWords.set(playerId, newWord);
+      if (!secretWordCard.classList.contains("hidden")) {
+        secretWordText.textContent = newWord;
+      }
+      return;
+    }
+
+    const last = lastPlayerWords.get(playerId) || "";
+
+    if (newWord !== last) {
+      // Word changed (likely reshuffle) — auto-hide visible secret card.
+      if (!secretWordCard.classList.contains("hidden")) {
+        hide(secretWordCard);
+        revealWordBtn.textContent = "Reveal My Word";
+        showToast("Your word changed — it's hidden.");
+      }
+
+      lastPlayerWords.set(playerId, newWord);
+      return;
+    }
+
+    // No change — if card visible, keep text in sync.
+    if (!secretWordCard.classList.contains("hidden")) {
+      secretWordText.textContent = newWord;
+    }
+  });
+}
 
 startGameBtn.addEventListener("click", async () => {
   const roomSnapshot = await get(ref(db, `rooms/${currentRoomCode}`));
