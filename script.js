@@ -70,6 +70,44 @@ function hide(element) {
   element.classList.add("hidden");
 }
 
+function showToast(message, duration = 2500) {
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  Object.assign(toast.style, {
+    position: "fixed",
+    bottom: "24px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "rgba(0,0,0,0.85)",
+    color: "#fff",
+    padding: "10px 16px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+    zIndex: 9999,
+    opacity: 0,
+    transition: "opacity 180ms ease-in-out"
+  });
+
+  document.body.appendChild(toast);
+
+  // fade in
+  requestAnimationFrame(() => {
+    toast.style.opacity = 1;
+  });
+
+  // remove after duration
+  setTimeout(() => {
+    toast.style.opacity = 0;
+    toast.addEventListener(
+      "transitionend",
+      () => {
+        toast.remove();
+      },
+      { once: true }
+    );
+  }, duration);
+}
+
 createRoomBtn.addEventListener("click", async () => {
   const roomCode = generateRoomCode();
   const playerCount = Number(playerCountInput.value);
@@ -127,42 +165,46 @@ startGameBtn.addEventListener("click", async () => {
   const roomSnapshot = await get(ref(db, `rooms/${currentRoomCode}`));
   const room = roomSnapshot.val();
 
-  if (!room.players) {
+  if (!room || !room.players) {
     alert("No students have joined yet.");
     return;
   }
 
   const playerIds = Object.keys(room.players);
 
-  if (playerIds.length < 3) {
-    alert("You need at least 3 players.");
-    return;
+  // If game not started yet, enforce minimum/expected player counts.
+  if (room.status !== "started") {
+    if (playerIds.length < 3) {
+      alert("You need at least 3 players.");
+      return;
+    }
+
+    if (room.maxPlayers && playerIds.length < room.maxPlayers) {
+      alert(`Waiting for all ${room.maxPlayers} players to join. ${playerIds.length} of ${room.maxPlayers} have joined.`);
+      return;
+    }
   }
 
-  if (room.maxPlayers && playerIds.length < room.maxPlayers) {
-    alert(`Waiting for all ${room.maxPlayers} players to join. ${playerIds.length} of ${room.maxPlayers} have joined.`);
-    return;
-  }
-
+  // Choose a new word pair and undercover each time this button is pressed.
+  const wasStarted = room.status === "started";
+  const newWordPair = chooseRandomWordPair();
   const undercoverIndex = Math.floor(Math.random() * playerIds.length);
   const undercoverPlayerId = playerIds[undercoverIndex];
 
   const updates = {
     [`rooms/${currentRoomCode}/status`]: "started",
-    [`rooms/${currentRoomCode}/undercoverPlayerId`]: undercoverPlayerId
+    [`rooms/${currentRoomCode}/undercoverPlayerId`]: undercoverPlayerId,
+    [`rooms/${currentRoomCode}/wordPair`]: newWordPair
   };
 
   playerIds.forEach((playerId) => {
-    const word =
-      playerId === undercoverPlayerId
-        ? room.wordPair.undercover
-        : room.wordPair.normal;
-
+    const word = playerId === undercoverPlayerId ? newWordPair.undercover : newWordPair.normal;
     updates[`rooms/${currentRoomCode}/players/${playerId}/word`] = word;
   });
 
   await update(ref(db), updates);
   startGameBtn.textContent = "Words Sent! Click again to reshuffle.";
+  showToast(wasStarted ? "Words reshuffled." : "Words sent to players.");
 });
 
 revealWordBtn.addEventListener("click", async () => {
